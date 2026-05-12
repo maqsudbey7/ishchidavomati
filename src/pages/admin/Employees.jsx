@@ -4,6 +4,7 @@ import {
   FiPlus,
   FiEdit2,
   FiTrash2,
+  FiClock,
 } from "react-icons/fi";
 
 import AdminLayout from "../../layouts/AdminLayout";
@@ -13,65 +14,49 @@ import AddEmployeeModal from "../../components/forms/AddEmployeeModal";
 import EditEmployeeModal from "../../components/forms/EditEmployeeModal";
 
 export default function Employees() {
-  const { employees, setEmployees } =
-    useEmployees();
+  const { employees, setEmployees } = useEmployees();
 
-  const [showAddModal, setShowAddModal] =
-    useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [search, setSearch] = useState("");
 
-  const [selectedEmployee, setSelectedEmployee] =
-    useState(null);
-
-  const [search, setSearch] =
-    useState("");
-
-  // SEARCH
-  const filteredEmployees = employees.filter(
-    (e) =>
-      e.name
-        .toLowerCase()
-        .includes(search.toLowerCase())
+  const filteredEmployees = employees.filter((e) =>
+    e.name?.toLowerCase().includes(search.toLowerCase())
   );
 
-  // DELETE
   const deleteEmployee = (id) => {
-    const confirmDelete = window.confirm(
-      "Xodimni o‘chirmoqchimisiz?"
-    );
+    if (!window.confirm("O‘chirasizmi?")) return;
+    setEmployees(employees.filter((e) => e.id !== id));
+  };
 
-    if (!confirmDelete) return;
-
-    const updated = employees.filter(
-      (e) => e.id !== id
-    );
-
-    setEmployees(updated);
+  // 💡 salary type label
+  const getSalaryTypeLabel = (type) => {
+    if (type === "daily") return "K";
+    if (type === "weekly") return "H";
+    if (type === "monthly") return "O";
+    return "";
   };
 
   return (
     <AdminLayout title="Xodimlar">
+      <div className="space-y-6">
 
-      <div className="space-y-5">
-
-        {/* TOP */}
+        {/* HEADER */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
 
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-white">
-              Xodimlar
-            </h1>
-
+            <h1 className="text-3xl font-bold">Xodimlar</h1>
             <p className="text-slate-400 text-sm">
-              Barcha ishchilar ro‘yxati
+              HR boshqaruv paneli
             </p>
           </div>
 
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 transition px-5 py-3 rounded-2xl font-medium"
+            className="bg-blue-600 px-5 py-3 rounded-2xl flex items-center gap-2"
           >
             <FiPlus />
-            Xodim qo‘shish
+            Yangi xodim
           </button>
 
         </div>
@@ -82,173 +67,141 @@ export default function Employees() {
           <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
 
           <input
-            type="text"
-            placeholder="Xodim qidirish..."
             value={search}
-            onChange={(e) =>
-              setSearch(e.target.value)
-            }
-            className="w-full md:w-[350px] bg-slate-800 border border-slate-700 rounded-2xl py-3 pl-12 pr-4 outline-none focus:border-blue-500 transition"
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Xodim qidirish..."
+            className="w-full bg-slate-800 border border-slate-700 rounded-2xl py-3 pl-12"
           />
 
         </div>
 
-        {/* DESKTOP TABLE */}
-        <div className="hidden md:block bg-slate-900/70 border border-slate-800 rounded-3xl overflow-hidden">
+        {/* TABLE */}
+        <div className="hidden md:block bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden">
 
-          <div className="overflow-x-auto">
+          <table className="w-full">
 
-            <table className="w-full">
+            <thead className="bg-slate-800 text-slate-400">
+              <tr>
+                <th className="p-4 text-left">Ism</th>
+                <th className="p-4 text-left">Lavozim</th>
+                <th className="p-4 text-left">Maosh</th>
+                <th className="p-4 text-left">Ish vaqti</th>
+                <th className="p-4 text-left">Parol</th>
+                <th className="p-4 text-left">Amal</th>
+              </tr>
+            </thead>
 
-              <thead className="bg-slate-800/60 text-slate-400 text-sm">
+            <tbody>
 
-                <tr>
-                  <th className="p-4 text-left">Ism</th>
-                  <th className="p-4 text-left">Lavozim</th>
-                  <th className="p-4 text-left">Maosh</th>
-                  <th className="p-4 text-left">Bonus</th>
-                  <th className="p-4 text-left">Jarima</th>
-                  <th className="p-4 text-left">Holat</th>
-                  <th className="p-4 text-left">Amal</th>
-                </tr>
+              {filteredEmployees.map((e) => (
+                <tr
+                  key={e.id}
+                  className="border-t border-slate-800 hover:bg-slate-800/40"
+                >
 
-              </thead>
+                  {/* NAME */}
+                  <td className="p-4 font-medium">
+                    {e.name || "-"}
+                  </td>
 
-              <tbody>
+                  {/* POSITION */}
+                  <td className="p-4 text-slate-300">
+                    {e.position || "-"}
+                  </td>
 
-                {filteredEmployees.map((e) => (
-                  <tr
-                    key={e.id}
-                    className="border-t border-slate-800 hover:bg-slate-800/40 transition"
-                  >
+                  {/* SALARY */}
+                  <td className="p-4 text-emerald-400 whitespace-nowrap">
+                    {Number(e.salary || 0).toLocaleString("uz-UZ")} so‘m{" "}
+                    <span className="text-slate-400">
+                      ({getSalaryTypeLabel(e.salaryType)})
+                    </span>
+                  </td>
 
-                    <td className="p-4 font-medium">
-                      {e.name}
-                    </td>
-
-                    <td className="p-4 text-slate-300">
-                      {e.position}
-                    </td>
-
-                    <td className="p-4">
-                      {new Intl.NumberFormat(
-                        "uz-UZ"
-                      ).format(e.salaryPerHour)}{" "}
-                      so'm
-                    </td>
-
-                    <td className="p-4 text-emerald-400">
-                      +{e.bonus}
-                    </td>
-
-                    <td className="p-4 text-red-400">
-                      -{e.fine}
-                    </td>
-
-                    <td className="p-4">
-                      <span className="bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-xs">
-                        Faol
+                  {/* WORK TIME */}
+                  <td className="p-4">
+                    <span className="inline-flex items-center gap-2 bg-slate-800 px-3 py-1 rounded-xl text-sm">
+                      <FiClock />
+                      {e.startTime ?? "-"}:00 → {e.endTime ?? "-"}:00
+                      <span className="text-slate-400">
+                        ({e.workHours || 0} soat)
                       </span>
-                    </td>
+                    </span>
+                  </td>
 
-                    <td className="p-4">
+                  {/* PASSWORD */}
+                  <td className="p-4 text-yellow-400 font-mono">
+                    {e.password || "-"}
+                  </td>
 
-                      <div className="flex gap-2">
+                  {/* ACTION */}
+                  <td className="p-4">
+                    <div className="flex gap-2">
 
-                        <button
-                          onClick={() =>
-                            setSelectedEmployee(e)
-                          }
-                          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-xl transition"
-                        >
-                          <FiEdit2 />
-                          Edit
-                        </button>
+                      <button
+                        onClick={() => setSelectedEmployee(e)}
+                        className="bg-blue-600 p-2 rounded-lg hover:bg-blue-700"
+                      >
+                        <FiEdit2 />
+                      </button>
 
-                        <button
-                          onClick={() =>
-                            deleteEmployee(e.id)
-                          }
-                          className="flex items-center gap-2 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-xl transition"
-                        >
-                          <FiTrash2 />
-                          Delete
-                        </button>
+                      <button
+                        onClick={() => deleteEmployee(e.id)}
+                        className="bg-red-600 p-2 rounded-lg hover:bg-red-700"
+                      >
+                        <FiTrash2 />
+                      </button>
 
-                      </div>
+                    </div>
+                  </td>
 
-                    </td>
+                </tr>
+              ))}
 
-                  </tr>
-                ))}
+            </tbody>
 
-              </tbody>
-
-            </table>
-
-          </div>
+          </table>
 
         </div>
 
-        {/* MOBILE CARDS */}
+        {/* MOBILE */}
         <div className="md:hidden space-y-4">
 
           {filteredEmployees.map((e) => (
             <div
               key={e.id}
-              className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-4"
+              className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3"
             >
 
-              <div className="flex items-center justify-between">
+              <div className="flex justify-between">
 
                 <div>
-                  <h2 className="font-semibold text-lg">
-                    {e.name}
-                  </h2>
-
+                  <h2 className="font-bold">{e.name}</h2>
                   <p className="text-slate-400 text-sm">
                     {e.position}
                   </p>
                 </div>
 
-                <span className="bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-xs">
-                  Faol
-                </span>
-
               </div>
 
-              <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="text-sm space-y-1">
 
-                <div className="bg-slate-800 rounded-xl p-3">
-                  <p className="text-slate-400">
-                    Maosh
-                  </p>
-
-                  <p className="font-bold">
-                    {new Intl.NumberFormat(
-                      "uz-UZ"
-                    ).format(e.salaryPerHour)}
-                  </p>
+                <div>
+                  💰 {Number(e.salary || 0).toLocaleString()} so‘m{" "}
+                  <span className="text-slate-400">
+                    ({getSalaryTypeLabel(e.salaryType)})
+                  </span>
                 </div>
 
-                <div className="bg-slate-800 rounded-xl p-3">
-                  <p className="text-slate-400">
-                    Bonus
-                  </p>
-
-                  <p className="font-bold text-emerald-400">
-                    +{e.bonus}
-                  </p>
+                <div>
+                  ⏰ {e.startTime ?? "-"}:00 → {e.endTime ?? "-"}:00
                 </div>
 
-                <div className="bg-slate-800 rounded-xl p-3">
-                  <p className="text-slate-400">
-                    Jarima
-                  </p>
+                <div>
+                  ⏱ {e.workHours || 0} soat
+                </div>
 
-                  <p className="font-bold text-red-400">
-                    -{e.fine}
-                  </p>
+                <div className="text-yellow-400">
+                  🔐 {e.password}
                 </div>
 
               </div>
@@ -256,22 +209,16 @@ export default function Employees() {
               <div className="flex gap-2">
 
                 <button
-                  onClick={() =>
-                    setSelectedEmployee(e)
-                  }
-                  className="flex-1 bg-blue-600 py-3 rounded-xl flex items-center justify-center gap-2"
+                  onClick={() => setSelectedEmployee(e)}
+                  className="flex-1 bg-blue-600 py-2 rounded-xl"
                 >
-                  <FiEdit2 />
                   Edit
                 </button>
 
                 <button
-                  onClick={() =>
-                    deleteEmployee(e.id)
-                  }
-                  className="flex-1 bg-red-600 py-3 rounded-xl flex items-center justify-center gap-2"
+                  onClick={() => deleteEmployee(e.id)}
+                  className="flex-1 bg-red-600 py-2 rounded-xl"
                 >
-                  <FiTrash2 />
                   Delete
                 </button>
 
@@ -284,22 +231,17 @@ export default function Employees() {
 
       </div>
 
-      {/* ADD MODAL */}
+      {/* MODALS */}
       {showAddModal && (
         <AddEmployeeModal
-          closeModal={() =>
-            setShowAddModal(false)
-          }
+          closeModal={() => setShowAddModal(false)}
         />
       )}
 
-      {/* EDIT MODAL */}
       {selectedEmployee && (
         <EditEmployeeModal
           employee={selectedEmployee}
-          closeModal={() =>
-            setSelectedEmployee(null)
-          }
+          closeModal={() => setSelectedEmployee(null)}
         />
       )}
 

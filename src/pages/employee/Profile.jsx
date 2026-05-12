@@ -53,7 +53,7 @@ export default function Profile() {
           <div className="bg-slate-900/50 p-4 rounded-2xl border border-slate-700 sm:col-span-2">
             <p className="text-slate-400 text-sm">Ish vaqti</p>
             <p className="text-lg font-semibold">
-              {user.workHours}  8 soat
+              {user.workHours}   soat
             </p>
           </div>
 
