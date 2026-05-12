@@ -4,6 +4,7 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 
 export default function AddEmployeeModal({
   closeModal,
+  company,
 }) {
   const { employees, setEmployees } =
     useEmployees();
@@ -28,7 +29,7 @@ export default function AddEmployeeModal({
     let value = e.target.value;
 
     if (e.target.name === "salary") {
-      value = value.replace(/\D/g, "");
+      value = value.replace(/\D/g, ""); // faqat raqam
 
       setForm((prev) => ({
         ...prev,
@@ -142,18 +143,22 @@ export default function AddEmployeeModal({
     const newEmployee = {
       id: Date.now(),
       role: "employee",
+      company: company || "",
+
+      name: form.name,
+      password: form.password,
+      position: form.position,
+
+      salaryType: form.salaryType,
+      salaryAmount: Number(form.salary),
+
+      startTime: Number(form.startTime),
+      endTime: Number(form.endTime),
+
       bonus: 0,
       fine: 0,
       attendance: [],
-      salary: Number(form.salary),
-      salaryType: form.salaryType,
-      totalMonthlySalary:
-        totalSalaryPerMonth,
-      salaryPerHour: hourlySalary,
-      workHours,
-      ...form,
     };
-
     setEmployees([
       ...employees,
       newEmployee,

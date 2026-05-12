@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { users, employees } from "../../data/fakeData";
+import { users } from "../../data/fakeData";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -10,11 +10,14 @@ export default function Login() {
   const [password, setPassword] = useState("");
 
   const handleLogin = () => {
-    const allUsers = [...users, ...employees];
+    const storedEmployees =
+      JSON.parse(localStorage.getItem("employees")) || [];
+
+    const allUsers = [...users, ...storedEmployees];
 
     const user = allUsers.find(
       (item) =>
-        item.username === username &&
+        (item.username === username || item.name === username) &&
         item.password === password
     );
 
@@ -22,18 +25,16 @@ export default function Login() {
       return alert("Login yoki parol xato");
     }
 
-    // faqat kerakli ma’lumotlarni saqlaymiz
- const cleanUser = {
-  id: user.id,
-  username: user.username,
-  name: user.name,
-  role: user.role,
-  company: user.company,
-};
+    const cleanUser = {
+      id: user.id,
+      username: user.username || user.name,
+      name: user.name,
+      role: user.role,
+      company: user.company,
+    };
 
     localStorage.setItem("user", JSON.stringify(cleanUser));
 
-    // redirect
     if (user.role === "admin") {
       navigate("/admin");
     } else {
@@ -44,6 +45,7 @@ export default function Login() {
   return (
     <div className="h-screen flex items-center justify-center bg-slate-900">
       <div className="bg-slate-800 p-8 rounded-2xl w-[400px]">
+
         <h1 className="text-3xl font-bold mb-6 text-center">
           Employee System
         </h1>
@@ -53,7 +55,7 @@ export default function Login() {
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="w-full p-3 rounded-lg bg-slate-700 mb-4 outline-none"
+          className="w-full p-3 rounded-lg bg-slate-700 mb-4"
         />
 
         <input
@@ -61,15 +63,16 @@ export default function Login() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-3 rounded-lg bg-slate-700 mb-4 outline-none"
+          className="w-full p-3 rounded-lg bg-slate-700 mb-4"
         />
 
         <button
           onClick={handleLogin}
-          className="w-full bg-blue-600 p-3 rounded-lg hover:bg-blue-700"
+          className="w-full bg-blue-600 p-3 rounded-lg"
         >
           Kirish
         </button>
+
       </div>
     </div>
   );

@@ -23,77 +23,110 @@ export default function Attendance() {
     );
   }
 
-  const today = new Date().toISOString().slice(0, 10);
+  // 🟢 LOCAL DATE (UZ TIMEGA YAQIN)
+  const today = new Date().toLocaleDateString("en-CA");
 
-  const employeeIndex = employees.findIndex((e) => e.id === user.id);
-  const employee = employees[employeeIndex] || { attendance: [] };
-
-  const todayAttendance = employee.attendance?.find(
-    (a) => a.date === today
+  const employeeIndex = employees.findIndex(
+    (e) => e.id === user.id
   );
 
-  const updateEmployee = (attendance) => {
-    const updated = [...employees];
+  const employee = employees[employeeIndex];
 
-    updated[employeeIndex] = {
-      ...employee,
-      attendance,
-    };
+  if (!employee) {
+    return (
+      <EmployeeLayout title="Davomat">
+        <div className="text-white p-10 text-center">
+          Employee topilmadi
+        </div>
+      </EmployeeLayout>
+    );
+  }
 
-    setEmployees(updated);
-  };
+  const attendance = employee.attendance || [];
+
+  const todayAttendance = attendance.find(
+    (a) => a.date === today
+  );
 
   const showMessage = (text) => {
     setMessage(text);
     setTimeout(() => setMessage(""), 2000);
   };
 
+  const updateEmployee = (newAttendance) => {
+    const updated = [...employees];
+
+    updated[employeeIndex] = {
+      ...employee,
+      attendance: newAttendance,
+    };
+
+    setEmployees(updated);
+  };
+
+  // 🟢 STATUS FUNCTION (09:00–18:00)
+  const getStatus = (time) => {
+    const hour = Number(time.split(":")[0]);
+
+    if (hour < 9) return "Erta";
+    if (hour <= 18) return "Hozir";
+    return "Kech";
+  };
+
+  // ================= CHECK IN =================
   const checkIn = () => {
-    const now = new Date().toLocaleTimeString();
+    const now = new Date().toLocaleTimeString("uz-UZ", {
+      hour12: false,
+    });
 
-    const updatedAttendance = [...employee.attendance];
+    const updated = [...attendance];
 
-    const todayIndex = updatedAttendance.findIndex(
+    const index = updated.findIndex(
       (a) => a.date === today
     );
 
-    if (todayIndex !== -1 && updatedAttendance[todayIndex].checkIn) {
+    if (index !== -1 && updated[index].checkIn) {
       return showMessage("Siz bugun allaqachon kelgansiz");
     }
 
-    const status = now <= "09:00:00" ? "present" : "late";
+    const status = getStatus(now);
 
-    updatedAttendance.push({
+    updated.push({
       date: today,
       checkIn: now,
       checkOut: "",
       status,
     });
 
-    updateEmployee(updatedAttendance);
+    updateEmployee(updated);
 
     addNotification(`${user.name} ishga keldi`, "success");
     showMessage("Keldim saqlandi");
   };
 
+  // ================= CHECK OUT =================
   const checkOut = () => {
-    const now = new Date().toLocaleTimeString();
+    const now = new Date().toLocaleTimeString("uz-UZ", {
+      hour12: false,
+    });
 
-    const updatedAttendance = [...employee.attendance];
+    const updated = [...attendance];
 
-    const todayIndex = updatedAttendance.findIndex(
+    const index = updated.findIndex(
       (a) => a.date === today
     );
 
-    if (todayIndex === -1) return showMessage("Avval Keldim bosing");
+    if (index === -1) {
+      return showMessage("Avval Keldim bosing");
+    }
 
-    if (updatedAttendance[todayIndex].checkOut) {
+    if (updated[index].checkOut) {
       return showMessage("Siz chiqib bo‘lgansiz");
     }
 
-    updatedAttendance[todayIndex].checkOut = now;
+    updated[index].checkOut = now;
 
-    updateEmployee(updatedAttendance);
+    updateEmployee(updated);
 
     addNotification(`${user.name} ishdan chiqdi`, "warning");
     showMessage("Ketdim saqlandi");
@@ -105,50 +138,35 @@ export default function Attendance() {
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
 
         {/* HEADER */}
-        <div className="text-center space-y-1">
+        <div className="text-center">
           <h1 className="text-2xl font-bold text-white">
             Bugungi Davomat
           </h1>
-          <p className="text-slate-400 text-sm">
-            {today}
-          </p>
+          <p className="text-slate-400 text-sm">{today}</p>
         </div>
 
-        {/* MESSAGE (TOAST STYLE) */}
+        {/* MESSAGE */}
         {message && (
           <div className="bg-slate-900 border border-slate-700 text-white text-center py-2 rounded-xl text-sm">
             {message}
           </div>
         )}
 
-        {/* MAIN CARD */}
-        <div className="bg-slate-800 rounded-3xl p-6 space-y-6 shadow-xl">
+        {/* CARD */}
+        <div className="bg-slate-800 rounded-3xl p-6 space-y-6">
 
-          {/* STATUS SECTION */}
+          {/* STATUS */}
           <div className="flex justify-between items-center">
+            <p className="text-white font-bold text-xl">
+              Holati
+            </p>
 
-            <div>
-              <p className="text-white font-bold text-xl">Holati</p>
-              {/* <p className="text-white font-semibold text-lg">
-                {todayAttendance?.status || "Kelmagan"}
-              </p> */}
-            </div>
-
-            <div
-              className={`px-4 py-1 rounded-full text-sm text-white ${
-                todayAttendance?.status === "Hozir"
-                  ? "bg-green-600"
-                  : todayAttendance?.status === "Kech"
-                  ? "bg-yellow-500"
-                  : "bg-slate-600"
-              }`}
-            >
+            <div className="px-4 py-1 rounded-full text-sm text-white bg-slate-600">
               {todayAttendance?.status || "Kelmagan"}
             </div>
-
           </div>
 
-          {/* TIME INFO */}
+          {/* TIME */}
           <div className="grid grid-cols-2 gap-3">
 
             <div className="bg-slate-900 p-4 rounded-2xl">
@@ -167,19 +185,19 @@ export default function Attendance() {
 
           </div>
 
-          {/* ACTION BUTTONS */}
+          {/* BUTTONS */}
           <div className="grid grid-cols-2 gap-3">
 
             <button
               onClick={checkIn}
-              className="bg-green-600 hover:bg-green-700 transition py-3 rounded-xl font-semibold"
+              className="bg-green-600 hover:bg-green-700 py-3 rounded-xl font-semibold"
             >
               Keldim
             </button>
 
             <button
               onClick={checkOut}
-              className="bg-red-600 hover:bg-red-700 transition py-3 rounded-xl font-semibold"
+              className="bg-red-600 hover:bg-red-700 py-3 rounded-xl font-semibold"
             >
               Ketdim
             </button>

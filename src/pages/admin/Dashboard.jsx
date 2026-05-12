@@ -25,7 +25,7 @@ export default function Dashboard() {
   let absent = 0;
 
   employees.forEach((emp) => {
-    const record = emp.attendance.find(
+    const record = emp.attendance?.find(
       (a) => a.date === today
     );
 

@@ -7,17 +7,22 @@ export default function Salary() {
   const { employees } = useEmployees();
 
   const formatUZS = (value) =>
-    new Intl.NumberFormat("uz-UZ").format(value) + " so'm";
+    new Intl.NumberFormat("uz-UZ").format(value || 0) + " so'm";
 
   if (!user) return null;
 
-  const employee = employees.find((e) => e.id === user.id);
+  // ✅ FIX: username orqali topish (ENG MUHIM QISMI)
+  const employee = employees.find(
+    (e) => e.username === user.username
+  );
 
   if (!employee) {
     return (
-      <div className="p-6 text-slate-300">
-        Employee topilmadi
-      </div>
+      <EmployeeLayout title="Oylik">
+        <div className="p-6 text-slate-300">
+          Employee topilmadi
+        </div>
+      </EmployeeLayout>
     );
   }
 
@@ -34,14 +39,17 @@ export default function Salary() {
     }
   });
 
-  const salary = totalHours * employee.salaryPerHour;
-  const bonus = employee.bonus || 0;
-  const fine = employee.fine || 0;
+  // ✅ FIX: salaryAmount ishlatamiz
+  const hourlyRate = Number(employee.salaryAmount || 0);
+
+  const salary = totalHours * hourlyRate;
+  const bonus = Number(employee.bonus || 0);
+  const fine = Number(employee.fine || 0);
+
   const finalSalary = salary + bonus - fine;
 
   return (
     <EmployeeLayout title="Oylik">
-
       <div className="p-4 md:p-6 space-y-6">
 
         {/* HEADER */}
@@ -54,7 +62,7 @@ export default function Salary() {
           </p>
         </div>
 
-        {/* GRID (DESKTOP 2 COL / MOBILE 1 COL) */}
+        {/* GRID */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
           <div className="bg-slate-800 rounded-xl p-4 flex justify-between">
@@ -67,7 +75,7 @@ export default function Salary() {
           <div className="bg-slate-800 rounded-xl p-4 flex justify-between">
             <span className="text-slate-400">Soatlik maosh</span>
             <span className="text-white font-bold">
-              {formatUZS(employee.salaryPerHour)}
+              {formatUZS(hourlyRate)}
             </span>
           </div>
 
@@ -87,7 +95,7 @@ export default function Salary() {
 
         </div>
 
-        {/* FINAL SALARY HERO */}
+        {/* FINAL */}
         <div className="bg-gradient-to-r from-blue-600/20 to-emerald-500/20 border border-slate-700 rounded-2xl p-6 text-center shadow-xl">
 
           <p className="text-slate-300 text-sm">
@@ -105,7 +113,6 @@ export default function Salary() {
         </div>
 
       </div>
-
     </EmployeeLayout>
   );
-} 
+}
