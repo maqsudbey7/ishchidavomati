@@ -1,18 +1,42 @@
 export const users = [
+  // MARKET ADMIN
   {
     id: 1,
+    username: "market_admin",
+    password: "123",
+    role: "admin",
+    company: "Fresh Market",
+  },
+
+  // CHEVARXONA ADMIN
+  {
+    id: 2,
+    username: "sewing_admin",
+    password: "123",
+    role: "admin",
+    company: "Chevarxona",
+  },
+  {
+    id: 3,
     username: "admin",
     password: "123",
     role: "admin",
+    company: "bags",
   },
 ];
 
 export const employees = [
+  // =========================
+  // FRESH MARKET
+  // =========================
+
   {
     id: 101,
     username: "ali",
     password: "123",
     role: "employee",
+
+    company: "Fresh Market",
 
     name: "Ali",
     position: "Sotuvchi",
@@ -30,6 +54,8 @@ export const employees = [
     password: "123",
     role: "employee",
 
+    company: "Fresh Market",
+
     name: "Vali",
     position: "Kassir",
 
@@ -46,6 +72,8 @@ export const employees = [
     password: "123",
     role: "employee",
 
+    company: "Fresh Market",
+
     name: "Sardor",
     position: "Manager",
 
@@ -56,82 +84,60 @@ export const employees = [
     attendance: [],
   },
 
+  // =========================
+  // CHEVARXONA
+  // =========================
+
   {
-    id: 104,
-    username: "jamshid",
+    id: 201,
+    username: "madina",
     password: "123",
     role: "employee",
 
-    name: "Jamshid",
-    position: "Omborchi",
+    company: "Chevarxona",
 
-    salaryPerHour: 20000,
-    bonus: 0,
+    name: "Madina",
+    position: "Tikuvchi",
+
+    salaryPerHour: 28000,
+    bonus: 70000,
+    fine: 0,
+
+    attendance: [],
+  },
+
+  {
+    id: 202,
+    username: "zuhra",
+    password: "123",
+    role: "employee",
+
+    company: "Chevarxona",
+
+    name: "Zuhra",
+    position: "Dizayner",
+
+    salaryPerHour: 40000,
+    bonus: 120000,
     fine: 10000,
 
     attendance: [],
   },
 
   {
-    id: 105,
-    username: "aziz",
+    id: 203,
+    username: "kamola",
     password: "123",
     role: "employee",
 
-    name: "Aziz",
-    position: "Yetkazib beruvchi",
+    company: "Chevarxona",
+
+    name: "Kamola",
+    position: "Qadoqlovchi",
 
     salaryPerHour: 18000,
     bonus: 30000,
     fine: 0,
-
-    attendance: [],
-  },
-
-  {
-    id: 106,
-    username: "bekzod",
-    password: "123",
-    role: "employee",
-
-    name: "Bekzod",
-    position: "Operator",
-
-    salaryPerHour: 27000,
-    bonus: 80000,
-    fine: 15000,
-
-    attendance: [],
-  },
-
-  {
-    id: 107,
-    username: "doston",
-    password: "123",
-    role: "employee",
-
-    name: "Doston",
-    position: "Sotuvchi",
-
-    salaryPerHour: 24000,
-    bonus: 40000,
-    fine: 0,
-
-    attendance: [],
-  },
-
-  {
-    id: 108,
-    username: "javohir",
-    password: "123",
-    role: "employee",
-
-    name: "Javohir",
-    position: "Texnik",
-
-    salaryPerHour: 30000,
-    bonus: 120000,
-    fine: 25000,
 
     attendance: [],
   },

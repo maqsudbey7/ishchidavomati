@@ -23,12 +23,13 @@ export default function Login() {
     }
 
     // faqat kerakli ma’lumotlarni saqlaymiz
-    const cleanUser = {
-      id: user.id,
-      username: user.username,
-      name: user.name,
-      role: user.role,
-    };
+ const cleanUser = {
+  id: user.id,
+  username: user.username,
+  name: user.name,
+  role: user.role,
+  company: user.company,
+};
 
     localStorage.setItem("user", JSON.stringify(cleanUser));
 

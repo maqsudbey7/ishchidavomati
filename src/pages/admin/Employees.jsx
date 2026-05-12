@@ -6,6 +6,7 @@ import {
   FiTrash2,
   FiClock,
 } from "react-icons/fi";
+import useUser from "../../hooks/useUser";
 
 import AdminLayout from "../../layouts/AdminLayout";
 import { useEmployees } from "../../store/employeeStore";
@@ -20,9 +21,15 @@ export default function Employees() {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [search, setSearch] = useState("");
 
-  const filteredEmployees = employees.filter((e) =>
+
+
+const user = useUser();
+
+const filteredEmployees = employees.filter(
+  (e) =>
+    e.company === user.company &&
     e.name?.toLowerCase().includes(search.toLowerCase())
-  );
+);
 
   const deleteEmployee = (id) => {
     if (!window.confirm("O‘chirasizmi?")) return;
