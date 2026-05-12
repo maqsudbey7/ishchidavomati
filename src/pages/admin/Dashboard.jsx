@@ -56,7 +56,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <AdminLayout title="Dashboard">
+    <AdminLayout title="Boshqaruv paneli">
 
       {/* STATS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">

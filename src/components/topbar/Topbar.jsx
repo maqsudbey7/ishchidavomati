@@ -26,10 +26,10 @@ export default function Topbar({ title }) {
       <div className="flex items-center gap-3">
 
         {/* USER ICON (optional future profile) */}
-        <div className="hidden md:flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-lg">
+        {/* <div className="hidden md:flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-lg">
           <FiUser className="text-slate-300" />
           <span className="text-sm text-slate-300">Account</span>
-        </div>
+        </div> */}
 
         {/* LOGOUT */}
         <button

@@ -21,7 +21,7 @@ export default function Salary() {
   );
 
   return (
-    <AdminLayout title="Salary">
+    <AdminLayout title="Ish haqi">
       <div className="p-3 sm:p-5 lg:p-6 space-y-5">
         
         {/* TOP CARDS */}
