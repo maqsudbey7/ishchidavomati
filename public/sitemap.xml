@@ -4,5 +4,11 @@
   <url>
     <loc>https://ishvaqti.site/</loc>
   </url>
+  <url>
+  <loc>https://ishvaqti.site/login</loc>
+</url>
+<url>
+  <loc>https://ishvaqti.site/dashboard</loc>
+</url>
 
 </urlset>
